@@ -1,0 +1,66 @@
+################################################################################
+# DATASET: [From Water Networks to Binding Affinities: Resolving Solvation Dynamics for Accurate Protein-Ligand Predictions]
+# CONTENTS: Input and Output files for Absolute Binding Free Energy (ABFE)
+# FORCE FIELD: AMOEBA (amoebabio18.prm)
+# SOFTWARE: Tinker / Colvars
+################################################################################
+I. GENERAL DIRECTORY STRUCTURE
+--------------------------------------------------------------------------------
+The dataset is organized by complex (identified by PDB ID). Each complex directory
+contains the necessary files to reproduce the thermodynamic cycle calculations:
+Gas Phase, Condensed Phase (Bound state), and Condensed Phase (Unbound/Bulk state).
+
+Directory Tree:
+/complexes/
+    |-- [PDB_ID]/                  # Root folder for a specific system (e.g., 1I05)
+        |
+        |-- Gas_Phase/             # Ligand in vacuum calculations
+        |
+        |-- Condensed_Phase/
+            |-- Bound/             # Complex (Protein + Ligand) in water box
+            |   |-- eq/            # Equilibration stage
+            |   |-- ELEC/          # Electrostatic decoupling calculations
+            |   |-- VDW/           # Van der Waals decoupling calculations
+            |   |-- complex.pdb    # Reference PDB of the complex
+            |   |-- readme         # Mapping of atom indices (Tinker .xyz vs original PDB)
+            |
+            |-- Unbound/           # Ligand only in water box
+                |-- eq/            # Equilibration stage
+                |-- ELEC/          # Electrostatic decoupling calculations
+                |-- VDW/           # Van der Waals decoupling calculations
+
+
+II. FILE AND FOLDER DESCRIPTIONS
+A. File Extensions & Types:
+---------------------------
+*.xyz_N         : Tinker coordinate files after minimization.
+*.xyz           : Reference geometry for the protein-ligand in condensed phase.
+*.key           : Tinker keyword files containing simulation settings and parameters.
+*.prm           : Force field parameter files (AMOEBA Bio 2018).
+*.colvars       : Configuration for collective variables (restraints/constraints).
+*.tcl           : Scripts used for execution or specific restraint definitions.
+*.pdb           : Standard Protein Data Bank format structure files.
+
+B. Specific Directories & Key Files:
+------------------------------------
+1. Gas_Phase/
+   - Contains inputs for the ligand in vacuum simulations (part of the thermodynamic cycle).
+   - ligand_gas-ref.xyz: Reference geometry for the ligand in gas phase.
+
+2. Condensed_Phase/Bound/
+   - eq/ (Equilibration):
+     - complex_after_eq.pdb: the final equilibrated structure
+       used for production BFE (Binding Free Energy) calculations.
+
+   - ELEC/ & VDW/ (Production):
+     - Contains input (.key, .xyz) and (.colvars, .tcl) files for the
+       alchemical transformation steps.
+
+   - readme (inside Bound/):
+     - A technical note describing the atom selection correspondence between the
+       Tinker .xyz format and the original PDB system, specifically regarding
+       Distance Based Criteria (DBC) selections.
+
+3. Condensed_Phase/Unbound/
+   - Analogous to the Bound directory but contains the ligand in a water box
+     (Bulk solvent) without the protein.
